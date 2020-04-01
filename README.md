@@ -1,4 +1,6 @@
-# OLC - Overlap Layout Consensus
+# OLC - Overlap Layout Consensus 
+
+[![pipeline status](https://gitlab.com/Wasiollo/mbi/badges/master/pipeline.svg)](https://gitlab.com/Wasiollo/mbi/commits/master)
 
 Project for MBI lessons on WUT, which shows how the OLC algorithm works.
  
