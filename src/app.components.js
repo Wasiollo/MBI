@@ -2,3 +2,4 @@
 import './components/header';
 import './components/home';
 import './components/user';
+import './components/chart';
