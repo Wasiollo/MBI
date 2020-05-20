@@ -1,23 +1,2 @@
-<div class="container">
-    <h1>{{$ctrl.heading}}</h1>
-    <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
-        <div class="card border-0">
-            <div class="card-header bg-success text-white" id="header">
-                <div>
-                    Odczyty
-                </div>
-                <div>
-                    Hmmm może tutaj niecch będzie miejsce do wprowadzania danych? {{$ctrl.counter}}
-                </div>
-                <button class="btn btn-light text-success" ng-click="$ctrl.testClick()">Test button</button>
-
-
-            </div>
-            <div class="card-body">
-                A tutaj wykres :)
-                <app-chart></app-chart>
-
-            </div>
-        </div>
-    </div>
-</div>
+<input-based ng-show="$ctrl.isInputBasedActive()"></input-based>
+<file-based ng-show="$ctrl.isFileBasedActive()"></file-based>

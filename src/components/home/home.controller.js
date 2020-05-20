@@ -1,18 +1,20 @@
 export default class HomeController {
-    constructor($log) {
+    constructor($log, tabsService) {
         'ngInject';
 
         this.$log = $log;
-        this.counter = 0;
+        this.tabsService = tabsService
     }
 
     $onInit = () => {
-        this.heading = 'Obliczanie sekwencji metodą grafu OLC ';
         this.$log.info('Activated Home View.');
     };
 
-    testClick() {
-        this.$log.log('elo');
-        this.counter += 1;
+    isFileBasedActive = () => {
+        return this.tabsService.isActive(this.tabsService.FILE_BASED);
+    }
+
+    isInputBasedActive = () => {
+        return this.tabsService.isActive(this.tabsService.INPUT_BASED);
     }
 }

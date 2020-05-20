@@ -3,3 +3,5 @@ import './components/header';
 import './components/home';
 import './components/user';
 import './components/chart';
+import './components/input-based';
+import './components/file-based';

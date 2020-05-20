@@ -16,7 +16,9 @@ const appModule = angular
         'app.header',
         'app.home',
         'app.user',
-        'app.chart'
+        'app.chart',
+        'app.input-based',
+        'app.file-based'
     ]);
 
 export default appModule;

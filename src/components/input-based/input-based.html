@@ -1,0 +1,48 @@
+<div class="container">
+    <h1>{{$ctrl.heading}}</h1>
+    <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="card border-0">
+            <div class="card-header bg-success text-white" id="header">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-row">
+                                <label class="col-3 col-form-label" for="readInput">Nowy odczyt:</label>
+                                <input class="form-control col-5" type="text" id="readInput"/>
+                                <button class="btn btn-light col-3" style="margin-left: 10px; "
+                                        onclick="addUserReading()">Dodaj
+                                </button>
+                        </div>
+                        <div class="form-row mt-2">
+                            <label class="col-3 col-form-label" for="graphSize">Wymiar grafu:</label>
+                            <input class="form-control col-5" type="text" id="graphSize"/>
+                            <button class="btn btn-light col-3 ml-2" onclick="generateGraph('graphUserDimensionInput')">
+                                Generuj graf
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <select style="width: 200px;" multiple>
+                        </select>
+                        <button onclick="clearAll()">Wyczyść</button>
+                        <br/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <button class="btn btn-light" onclick="stepByStep('graphUserDimensionInput')">Krok po kroku
+                    </button>
+                    <button disabled class="btn btn-light" onclick="nextStep()">Dalej</button>
+                    <button disabled class="btn btn-light" onclick="disableButtonsStepByStep()">Stop</button>
+                    <button class="btn btn-light" onclick="findEulerPath()">Wyznacz ścieżkę</button>
+                    <label class="col-form-label" for="resultSequence">Otrzymana sekwencja:</label>
+                    <input class="form-control col-3" disabled type="text" id="resultSequence"/>
+                </div>
+
+
+            </div>
+            <div class="card-body">
+                <app-chart></app-chart>
+
+            </div>
+        </div>
+    </div>
+</div>
