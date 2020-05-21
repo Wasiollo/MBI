@@ -1,8 +1,7 @@
 const { each } = require("jquery");
+const { randomBates, max, range } = require("d3");
 
-class Graph {
-    
-}
+
 function makeArray(w, h, val) {
     var arr = [];
     for(let i = 0; i < h; i++) {
@@ -17,7 +16,7 @@ function makeArray(w, h, val) {
 
 function olc_assembly(contigs, l, k) {
     let adj_matrix =  overlap_naive(contigs, l, k);
-    return adj_matrix;
+    return greedy_hpath(contigs, adj_matrix);
 }
 
 function overlap_naive(contigs, l, k) { // l - minimal overlap size ; k - maximal overlap size
@@ -43,4 +42,38 @@ function overlap_naive(contigs, l, k) { // l - minimal overlap size ; k - maxima
     return adj_matrix;
 }
 
-olc_assembly(['aatattt', 'attttat'], 3, 5);
+function greedy_hpath(contigs, adj_matrix) {
+    let k_lenght = contigs[0].length
+    let first_index = Math.round(Math.random() * k_lenght);
+    
+    let sequence = contigs[first_index];
+    let remaining_indexes = range(0, contigs.length);
+    const indx = remaining_indexes.indexOf(first_index);
+    remaining_indexes.splice(indx, 1);
+    let last_index = first_index;
+    while(remaining_indexes.length != 0) {
+        let max_index = -1;
+        let max_overlap = -1;
+        for(let i of remaining_indexes) {
+            if (adj_matrix[last_index][i] > max_overlap) {
+                max_overlap = adj_matrix[last_index][i];
+                max_index = i;
+            }
+        }
+        if(max_index != -1) {
+            const indx = remaining_indexes.indexOf(max_index)
+            remaining_indexes.splice(indx, 1);
+            sequence += contigs[max_index].slice(max_overlap, k_lenght);
+    
+            last_index = max_index;
+        } else {
+            break;
+        }
+    }
+
+    return sequence;
+
+}
+
+let seq = olc_assembly(['XTTG', 'TTGG', 'TGGT', 'TGXG', 'GGTT', 'TTGX', 'GTTG', 'XGXT', 'GXGX'], 2, 4);
+console.log(seq);
