@@ -7,7 +7,7 @@ export default class HomeController {
     }
 
     $onInit = () => {
-        this.$log.info('Activated Home View.');
+        // this.$log.info('Activated Home View.');
     };
 
     isFileBasedActive = () => {

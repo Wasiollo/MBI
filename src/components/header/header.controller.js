@@ -8,7 +8,7 @@ export default class HeaderController {
     }
 
     $onInit = () => {
-        this.$log.info('hee he he header');
+        // this.$log.info('hee he he header');
     };
 
     setCurrentTab(tab) {

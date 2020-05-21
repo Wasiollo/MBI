@@ -1,16 +1,17 @@
 import * as d3 from 'd3';
 
 export default class ChartController {
-    constructor($log) {
+    constructor($log, $scope) {
         'ngInject';
 
         this.$log = $log;
-        this.width = 1020;
+        this.$scope = $scope;
+        this.width = 1070;
         this.height = 550;
     }
 
     $onInit = () => {
-        this.$log.info('Activated Chart View.');
+        // this.$log.info('Activated Chart View.');
         this.links = [];
 
         this.userReadings = [];
@@ -30,7 +31,7 @@ export default class ChartController {
             .nodes(d3.values(this.nodes))
             .links(this.links)
             .size([width, height])
-            .linkDistance(200)
+            .linkDistance(50)
             .charge(-2000);
 
         let svg = d3.select("body").select("svg")
@@ -40,14 +41,13 @@ export default class ChartController {
         svg.append("g");
         svg.append("defs");
         this.update();
-        this.addLink(1,2);
-        this.addLink(2,3);
-        this.addLink(3,4);
-        this.addLink(4,5);
-        this.addLink(5,6);
-        this.addLink(6,1);
 
+        this.$scope.$on('addLink', (event, linkData) => {
+            this.addLink(linkData.source, linkData.target);
+        });
     };
+
+
 
     update() {
         var svg = d3.select("body").select("svg");
@@ -90,10 +90,10 @@ export default class ChartController {
 
         circle.exit().remove();
 
-        var text = svg.selectAll("text")
+        var nodeTexts = svg.selectAll("text")
             .data(this.force.nodes());
 
-        text.enter()
+        nodeTexts.enter()
             .insert("text")
             .attr("x", 8)
             .attr("dy", ".35em")
@@ -101,12 +101,12 @@ export default class ChartController {
                 return d.name;
             });
 
-        text.exit().remove();
+        nodeTexts.exit().remove();
 
         this.force.on("tick", function () {
             path.attr("d", linkArc);
             circle.attr("transform", transform);
-            text.attr("transform", transform);
+            nodeTexts.attr("transform", transform);
         });
 
         function transform(d) {
@@ -184,6 +184,8 @@ export default class ChartController {
         this.updateNodesIfNeeded(link);
         this.force.nodes(d3.values(this.nodes)).links(this.links);
         this.update();
+        // console.log(this.nodes);
+        // console.log(this.links);
     }
 
     updateNodesIfNeeded(link) {

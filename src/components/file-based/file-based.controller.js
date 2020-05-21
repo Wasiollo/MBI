@@ -8,11 +8,11 @@ export default class FileBasedController {
 
     $onInit = () => {
         this.heading = 'Obliczanie sekwencji metodą grafu OLC file based ';
-        this.$log.info('Activated Home View.');
+        // this.$log.info('Activated Home View.');
     };
 
     testClick() {
-        this.$log.log('elo');
+        // this.$log.log('elo');
         this.counter += 1;
     }
 }

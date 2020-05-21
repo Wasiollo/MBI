@@ -8,8 +8,7 @@
                         <div class="form-row">
                                 <label class="col-3 col-form-label" for="readInput">Nowy odczyt:</label>
                                 <input class="form-control col-5" type="text" id="readInput"/>
-                                <button class="btn btn-light col-3" style="margin-left: 10px; "
-                                        onclick="addUserReading()">Dodaj
+                                <button class="btn btn-light col-3 ml-1" ng-click="$ctrl.testClick()">Dodaj
                                 </button>
                         </div>
                         <div class="form-row mt-2">
@@ -32,7 +31,7 @@
                     </button>
                     <button disabled class="btn btn-light" onclick="nextStep()">Dalej</button>
                     <button disabled class="btn btn-light" onclick="disableButtonsStepByStep()">Stop</button>
-                    <button class="btn btn-light" onclick="findEulerPath()">Wyznacz ścieżkę</button>
+                    <button class="btn btn-light" onclick="()">Wyznacz ścieżkę</button>
                     <label class="col-form-label" for="resultSequence">Otrzymana sekwencja:</label>
                     <input class="form-control col-3" disabled type="text" id="resultSequence"/>
                 </div>

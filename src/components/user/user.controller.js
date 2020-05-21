@@ -14,6 +14,6 @@ export default class UserController {
             this.users = users;
         });
 
-        this.$log.info('Activated User View.');
+        // this.$log.info('Activated User View.');
     };
 }
