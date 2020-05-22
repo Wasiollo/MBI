@@ -3,7 +3,7 @@
     <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
         <div class="card border-0">
             <div class="card-header bg-success text-white" id="header">
-                <div class="row">
+                <div class="row mb-2">
                     <div class="col-6">
                         <div class="form-row">
                                 <label class="col-3 col-form-label" for="readInput">Nowy odczyt:</label>
@@ -20,11 +20,24 @@
                         </div>
                     </div>
                     <div class="col-6">
-                        <select style="width: 200px;" multiple>
-                            <option ng-repeat="read in $ctrl.readsBuffer">{{read}}</option>
-                        </select>
-                        <button onclick="clearAll()">Wyczyść</button>
-                        <br/>
+                        <div class="row">
+                            <div class="col-2">
+                                <label class="col-form-label">Odczyty:</label>
+                            </div>
+                            <div class="col-6">
+                                <ul class="list-group list-group-scrollable ">
+                                    <li class="list-group-item py-0" ng-if="$ctrl.readsBuffer.length === 0">
+                                        odczyt
+                                    </li>
+                                    <li class="list-group-item text-dark py-0" ng-repeat="read in $ctrl.readsBuffer">
+                                        {{read}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-light" ng-click="$ctrl.clearAll()">Wyczyść</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="form-row">

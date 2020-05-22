@@ -5,6 +5,7 @@ import './styles/styles.scss';
 import './services/core.module';
 // loading all module components
 import './app.components';
+import toastr from "angular-toastr"
 
 const appModule = angular
     .module('mbi', [
@@ -12,6 +13,7 @@ const appModule = angular
         'app.core',
         // 3rd party modules
         'ui.router',
+        'toastr',
         // application specific modules
         'app.header',
         'app.home',

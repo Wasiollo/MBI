@@ -1,10 +1,10 @@
 export default class InputBasedController {
-    constructor($log, chartService) {
+    constructor($log, chartService, toastr) {
         'ngInject';
 
         this.$log = $log;
         this.chartService = chartService;
-        this.counter = 0;
+        this.toastr = toastr;
     }
 
     $onInit = () => {
@@ -15,12 +15,13 @@ export default class InputBasedController {
     };
 
     addRead() {
-        // this.$log.log('elo');
-        this.counter += 1;
-        console.log(this.readInput);
-        this.readsBuffer.push(this.readInput);
+        const newRead = this.readInput;
+        if(this.readsBuffer.length > 0 && this.readsBuffer[0].length !== newRead.length){
+            this.toastr.error("Wszystkie oczyty muszą być tej samej dłguości.")
+            return;
+        }
+        this.readsBuffer.push(newRead);
         this.readInput = "";
-        // this.chartService.addLink(this.counter, this.counter+1);
     }
 
     generateGraph() {
@@ -28,5 +29,10 @@ export default class InputBasedController {
         this.readsBuffer.forEach( read => {
             this.chartService.addLink(read, 'ggct');
         })
+    }
+
+    clearAll() {
+        this.readsBuffer = [];
+        this.chartService.clearGraph();
     }
 }
