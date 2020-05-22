@@ -35,4 +35,8 @@ export default class InputBasedController {
         this.readsBuffer = [];
         this.chartService.clearGraph();
     }
+
+    testOlcAssmbly() {
+        this.chartService.testOlcAssembly();
+    }
 }
