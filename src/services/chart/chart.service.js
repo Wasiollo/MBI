@@ -8,4 +8,7 @@ export default class ChartService {
         const linkData = {"source": source, "target": target}
         this.rootScope.$broadcast('addLink', linkData);
     }
+    clearGraph() {
+        this.rootScope.$broadcast('clearGraph');
+    }
 }

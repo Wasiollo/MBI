@@ -45,6 +45,8 @@ export default class ChartController {
         this.$scope.$on('addLink', (event, linkData) => {
             this.addLink(linkData.source, linkData.target);
         });
+
+        this.$scope.$on('clearGraph', event => this.clearGraph());
     };
 
 
@@ -166,8 +168,9 @@ export default class ChartController {
     clearGraph() {
         let links = [];
         let nodes = {};
-        this.force.nodes(d3.values(nodes)).
-        this.links(links);
+        this.links = links;
+        this.nodes = nodes;
+        this.force.nodes(d3.values(nodes)).links(links);
         this.update();
     }
 

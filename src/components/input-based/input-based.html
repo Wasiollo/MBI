@@ -7,20 +7,21 @@
                     <div class="col-6">
                         <div class="form-row">
                                 <label class="col-3 col-form-label" for="readInput">Nowy odczyt:</label>
-                                <input class="form-control col-5" type="text" id="readInput"/>
-                                <button class="btn btn-light col-3 ml-1" ng-click="$ctrl.testClick()">Dodaj
+                                <input class="form-control col-5" type="text" id="readInput" ng-model="$ctrl.readInput" ng-value="$ctrl.readInput"/>
+                                <button class="btn btn-light col-3 ml-2" ng-click="$ctrl.addRead()">Dodaj
                                 </button>
                         </div>
                         <div class="form-row mt-2">
                             <label class="col-3 col-form-label" for="graphSize">Wymiar grafu:</label>
                             <input class="form-control col-5" type="text" id="graphSize"/>
-                            <button class="btn btn-light col-3 ml-2" onclick="generateGraph('graphUserDimensionInput')">
+                            <button class="btn btn-light col-3 ml-2" ng-click="$ctrl.generateGraph()">
                                 Generuj graf
                             </button>
                         </div>
                     </div>
                     <div class="col-6">
                         <select style="width: 200px;" multiple>
+                            <option ng-repeat="read in $ctrl.readsBuffer">{{read}}</option>
                         </select>
                         <button onclick="clearAll()">Wyczyść</button>
                         <br/>

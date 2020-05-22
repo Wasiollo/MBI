@@ -9,12 +9,24 @@ export default class InputBasedController {
 
     $onInit = () => {
         this.heading = 'Obliczanie sekwencji metodą grafu OLC input based';
+        this.readInput = "";
+        this.readsBuffer = [];
         // this.$log.info('Activated Home View.');
     };
 
-    testClick() {
+    addRead() {
         // this.$log.log('elo');
         this.counter += 1;
-        this.chartService.addLink(this.counter, this.counter+1);
+        console.log(this.readInput);
+        this.readsBuffer.push(this.readInput);
+        this.readInput = "";
+        // this.chartService.addLink(this.counter, this.counter+1);
+    }
+
+    generateGraph() {
+        this.chartService.clearGraph();
+        this.readsBuffer.forEach( read => {
+            this.chartService.addLink(read, 'ggct');
+        })
     }
 }
