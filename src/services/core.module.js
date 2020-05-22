@@ -1,6 +1,7 @@
 import routerHelperService from './router-helper/router-helper.service';
 import userService from './user/user.service';
 import tabsService from './tabs/tabs.service'
+import chartService from './chart/chart.service'
 
 const coreModule = angular.module('app.core', [
     'ui.router'
@@ -12,5 +13,6 @@ coreModule.config(routerHelperService);
 
 coreModule.service('userService', userService);
 coreModule.service('tabsService', tabsService);
+coreModule.service('chartService', chartService);
 
 export default coreModule;
