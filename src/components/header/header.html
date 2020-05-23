@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
-    <a class="navbar-brand" href="#">MBI - Graf pokrycia (OLC)</a>
+    <a class="navbar-brand" href="#">MBI - Graf pokrycia (OLC) - Obliczanie sekwencji metodą grafu OLC</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse"
             data-target="#navbar-menu"
             aria-controls="navbarNavAltMarkup" aria-expanded="false"
@@ -8,11 +8,6 @@
     </button>
     <div class="collapse navbar-collapse" id="navbar-menu">
         <ul class="navbar-nav">
-            <li ng-repeat="tab in $ctrl.tabs" class="nav-item" ng-class="{active: $ctrl.isActiveTab(tab)}" data-toggle="collapse" data-target="#navbar-menu" aria-expanded="false">
-                <a class="nav-link" ng-click="$ctrl.setCurrentTab(tab)">
-                    <i class="fa fa-users" aria-hidden="true"></i>&nbsp;{{tab}}
-                </a>
-            </li>
         </ul>
     </div>
 </nav>
