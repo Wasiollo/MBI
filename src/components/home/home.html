@@ -1,1 +1,82 @@
-<input-based "></input-based>
+<div class="container">
+    <div class="accordion" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="card border-0">
+            <div class="card-header bg-success text-white" id="header">
+                <div class="form-row mb-2">
+                    <label class="col-3 col-form-label">Sposób wprowadzenia danych</label>
+                    <button class="btn btn-light col-2" ng-class="{'active': $ctrl.currentInputMethod == 'user'}" ng-click="$ctrl.setInputMethod('user')">Manualnie </button>
+                    <button class="btn btn-light col-2 ml-2" ng-class="{'active': $ctrl.currentInputMethod == 'file'}"ng-click="$ctrl.setInputMethod('file')">Plik FASTA</button>
+                    <button class="btn btn-light col-2 ml-2" ng-class="{'active': $ctrl.currentInputMethod == 'example'}"ng-click="$ctrl.setInputMethod('example')">Przykładowe dane</button>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-6">
+                        <div ng-show="$ctrl.currentInputMethod == 'user'" class="form-row">
+                            <label class="col-3 col-form-label" for="readInput">Nowy odczyt:</label>
+                            <input class="form-control col-5" type="text" id="readInput" ng-model="$ctrl.readInput"
+                                   ng-value="$ctrl.readInput"/>
+                            <button class="btn btn-light col-3 ml-2" ng-click="$ctrl.addRead()">Dodaj
+                            </button>
+                        </div>
+                        <div ng-show="$ctrl.currentInputMethod == 'file'" class="form-row">
+                            <label class="col-3 col-form-label" for="readInput">Plik z danymi:</label>
+                            <input class="form-control file col-5" type="file" id="fileInput" accept=".fa"/>
+                            <button class="btn btn-light col-3 ml-2" ng-click="$ctrl.loadFile()">Załaduj
+                            </button>
+                        </div>
+                        <div ng-show="$ctrl.currentInputMethod == 'example'" class="form-row">
+                            <button class="btn btn-light col-11 ml-2" ng-click="$ctrl.loadExampleData()">
+                                Załaduj przykładowe dane
+                            </button>
+                        </div>
+                        <div class="form-row mt-2">
+                            <label class="col-3 col-form-label" for="graphAlgorithm">Algorytm:</label>
+                            <select class="form-control col-5" id="graphAlgorithm" ng-model="$ctrl.graphAlgorithm"
+                                    ng-options="algorithm.value as algorithm.label for algorithm in $ctrl.graphAlgorithms">
+                                <option value="?">--Select User--</option>
+                            </select>
+                            <button class="btn btn-light col-3 ml-2" ng-click="$ctrl.generateGraph('beforeReduction')">
+                                Generuj graf
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <div class="col-2">
+                                <label class="col-form-label">Odczyty:</label>
+                                <button class="btn btn-light" ng-click="$ctrl.testOlcAssmbly()">con_test</button>
+                            </div>
+                            <div class="col-7">
+                                <ul class="list-group list-group-scrollable" ng-model="$ctrl.readsBuffer">
+                                    <li class="list-group-item py-0" ng-if="$ctrl.readsBuffer.length === 0">
+                                        odczyt
+                                    </li>
+                                    <li class="list-group-item text-dark py-0" ng-repeat="read in $ctrl.readsBuffer" ng-model="read">
+                                        {{read}}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-light" ng-click="$ctrl.clearAll()">Wyczyść</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <button class="btn btn-light" onclick="stepByStep('graphUserDimensionInput')">Krok po kroku
+                    </button>
+                    <button disabled class="btn btn-light" onclick="nextStep()">Dalej</button>
+                    <button disabled class="btn btn-light" onclick="disableButtonsStepByStep()">Stop</button>
+                    <button class="btn btn-light" ng-click="$ctrl.generateGraph('afterReduction')">Po reduckji</button>
+                    <button class="btn btn-light" ng-click="$ctrl.assembly()">Wyznacz ścieżkę</button>
+                    <label class="col-form-label" for="resultSequence" >Otrzymana sekwencja:</label>
+                    <input class="form-control col-3" disabled type="text" id="resultSequence" ng-model="$ctrl.resultSequence"/>
+                </div>
+
+
+            </div>
+            <div class="card-body">
+                <app-new-chart></app-new-chart>
+            </div>
+        </div>
+    </div>
+</div>

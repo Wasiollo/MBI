@@ -17,9 +17,6 @@ const appModule = angular
         // application specific modules
         'app.header',
         'app.home',
-        'app.user',
-        'app.chart',
-        'app.input-based',
         'app.new-chart'
     ]);
 

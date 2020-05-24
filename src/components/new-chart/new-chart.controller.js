@@ -33,7 +33,7 @@ export default class NewChart {
             .size([this.width, this.height])
             .linkDistance([this.linkDistance])
             .charge([-500])
-            .theta(0.1)
+            .theta(0.5)
             .gravity(0.05)
             .start();
 

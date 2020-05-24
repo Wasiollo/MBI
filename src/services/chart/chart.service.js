@@ -164,7 +164,7 @@ export default class ChartService {
     }
 
     assembly(readsBuffer, type, graphShow){
-        return this.olc_assembly(readsBuffer,readsBuffer[0].length-1, 0 , type, graphShow);
+        return this.olc_assembly(readsBuffer, 2, readsBuffer[0].length , type, graphShow);
     }
 
     ajd_to_path_matrix(adj) {
