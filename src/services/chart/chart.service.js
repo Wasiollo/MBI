@@ -171,7 +171,7 @@ export default class ChartService {
             for (let j = 0; j < i; ++j) {
                 path_mat_i = math.multiply(path_mat_i, adj);
             }
-            // math.add(path_mat, path_mat_i); - nie czaję po co :)
+            math.add(path_mat, path_mat_i); 
         }
 
         path_mat.map(function (value, index, matrix) {
@@ -200,6 +200,11 @@ export default class ChartService {
 
     olc_assembly(contigs, l, k) {
         let adj_matrix = this.overlap_naive(contigs, l, k);
+
+        // Generate graph here from
+        // adj_matrix First step graph before reducing edges 
+        // adj_matrix[i][j] = 3 means that contigs[i] has 3 length suffix that overlaps 3 length preffix of contigs[j]
+        // In graph therms there is an edge from contigs[i] to contigs[j] with wieght 3
         console.log(this.greedy_hpath(contigs, adj_matrix));
 
         let path_mat = this.ajd_to_path_matrix(adj_matrix);
@@ -209,6 +214,9 @@ export default class ChartService {
         adj_matrix.map(function (value, index, matrix) {
             matrix.set(index, (path_mat.get(index) ? value : 0));
         });
+
+        // Generate graph here from
+        // adj_matrix Second step graph after reducing edges 
 
         let tree = new SuffixTree('');
         for(let c of contigs) {
