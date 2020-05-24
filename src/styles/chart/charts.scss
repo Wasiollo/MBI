@@ -1,22 +1,6 @@
 svg{
-  background: #D3D3D3;
+  border: 2px dashed green;
 }
-
-path {
-  fill: none;
-  stroke: #000;
-  stroke-width: 1px;
+.edgelabel{
+  color: black;
 }
-
-.link {
-  fill: none;
-  stroke: #666;
-  stroke-width: 1.5px;
-}
-
-circle {
-  fill: #1f77b4;
-  stroke: #fff;
-  stroke-width: 2px;
-}
-

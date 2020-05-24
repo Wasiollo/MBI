@@ -20,6 +20,7 @@ const appModule = angular
         'app.user',
         'app.chart',
         'app.input-based',
+        'app.new-chart'
     ]);
 
 export default appModule;

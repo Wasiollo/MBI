@@ -32,7 +32,9 @@ export default class ChartController {
             .links(this.links)
             .size([width, height])
             .linkDistance(50)
-            .charge(-2000);
+            .charge(-2000)
+            .theta(0.1)
+            .gravity(0.05);
 
         let svg = d3.select("body").select("svg")
             .attr("width", width)
@@ -104,6 +106,23 @@ export default class ChartController {
             });
 
         nodeTexts.exit().remove();
+
+        var edgelabels = svg.selectAll(".edgelabel")
+            .data(this.force.links())
+            .enter()
+            .append('text')
+            .style("pointer-events", "none")
+            .attr({'class':'edgelabel',
+                'id':function(d,i){return 'edgelabel'+i},
+                'dx':80,
+                'dy':0,
+                'font-size':10,
+                'fill':'#aaa'});
+
+        edgelabels.append('textPath')
+            .attr('xlink:href',function(d,i) {return '#edgepath'+i})
+            .style("pointer-events", "none")
+            .text(function(d,i){return 'label '+i});
 
         this.force.on("tick", function () {
             path.attr("d", linkArc);

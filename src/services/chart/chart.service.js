@@ -237,14 +237,23 @@ export default class ChartService {
     }
 
     createGraphFromMatrix(contigs, adj_matrix){
+        let dataset = {
+            nodes: [],
+            edges: []
+        };
         this.clearGraph();
+        contigs.forEach(c => {
+            dataset.nodes.push({name: c});
+        })
         for (let i = 0; i < contigs.length; ++i) {
             for (let j = 0; j < contigs.length; ++j) {
-                if( adj_matrix.get([i,j]) > 0){
-                    this.addLink(contigs[i],contigs[j]);
+                let currentCount = adj_matrix.get([i,j]);
+                if( currentCount > 0) {
+                    dataset.edges.push({source: i, target: j, count: currentCount})
                 }
             }
         }
+        this.rootScope.$broadcast('updateGraph', dataset);
     }
 
     overlap_naive(contigs, l, k) { // l - minimal overlap size ; k - maximal overlap size
