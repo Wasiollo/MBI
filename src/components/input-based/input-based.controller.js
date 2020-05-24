@@ -1,3 +1,5 @@
+
+
 export default class InputBasedController {
     constructor($log, $scope, chartService, toastr) {
         'ngInject';
@@ -11,7 +13,13 @@ export default class InputBasedController {
     $onInit = () => {
         this.readInput = "";
         this.readsBuffer = [];
-        this.currentInputMethod = ['user'];
+        this.currentInputMethod = 'user';
+        this.GREEDY = {value:'greedy', label:'Zachłanny'};
+        this.SUFFIX = {value:'suffix', label:'Drzewo sufixowe'}
+        this.DYNAMIC = {value:'dynamic', label:'Progr. dynamiczne'};
+        this.graphAlgorithm = this.GREEDY.value;
+        this.graphAlgorithms = [this.GREEDY, this.SUFFIX, this.DYNAMIC]
+        this.resultSequence = "";
     };
 
 
@@ -60,11 +68,12 @@ export default class InputBasedController {
         this.readsBuffer = ['XTTG', 'TTGG', 'TGGT', 'TGXG', 'GGTT', 'TTGX', 'GTTG'];
     }
 
-    generateGraph() {
-        this.chartService.clearGraph();
-        this.readsBuffer.forEach(read => {
-            this.chartService.addLink(read, 'ggct');
-        })
+    generateGraph(when) {
+        this.chartService.assembly(this.readsBuffer, this.graphAlgorithm, when);
+    }
+
+    assembly() {
+        this.resultSequence = this.chartService.assembly(this.readsBuffer, this.graphAlgorithm, 'none');
     }
 
     clearAll() {

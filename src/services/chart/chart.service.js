@@ -163,6 +163,10 @@ export default class ChartService {
         this.rootScope.$broadcast('clearGraph');
     }
 
+    assembly(readsBuffer, type, graphShow){
+        return this.olc_assembly(readsBuffer,readsBuffer[0].length-1, 0 , type, graphShow);
+    }
+
     ajd_to_path_matrix(adj) {
         const n = math.size(adj)[0];
         let path_mat = math.matrix(adj);
@@ -198,32 +202,49 @@ export default class ChartService {
         }
     }
 
-    olc_assembly(contigs, l, k) {
+    olc_assembly(contigs, l, k, type, graphShow) {
+
+        if(type === 'greedy'){
         let adj_matrix = this.overlap_naive(contigs, l, k);
+            if(graphShow === 'beforeReduction'){
+                this.createGraphFromMatrix(contigs, adj_matrix);
+            }
 
-        // Generate graph here from
-        // adj_matrix First step graph before reducing edges 
-        // adj_matrix[i][j] = 3 means that contigs[i] has 3 length suffix that overlaps 3 length preffix of contigs[j]
-        // In graph therms there is an edge from contigs[i] to contigs[j] with wieght 3
-        console.log(this.greedy_hpath(contigs, adj_matrix));
+            let path_mat = this.ajd_to_path_matrix(adj_matrix);
+            this.transitive_reduction(path_mat);
 
-        let path_mat = this.ajd_to_path_matrix(adj_matrix);
+            adj_matrix.map(function (value, index, matrix) {
+                matrix.set(index, (path_mat.get(index) ? value : 0));
+            });
 
-        this.transitive_reduction(path_mat);
+            if(graphShow === 'afterReduction'){
+                this.createGraphFromMatrix(contigs, adj_matrix);
+            }
 
-        adj_matrix.map(function (value, index, matrix) {
-            matrix.set(index, (path_mat.get(index) ? value : 0));
-        });
+            return this.greedy_hpath(contigs, adj_matrix);
+        } else if(type === 'suffix'){
+            //TODO
+            let tree = new SuffixTree('');
+            for(let c of contigs) {
+                tree.add(c);
+            }
 
-        // Generate graph here from
-        // adj_matrix Second step graph after reducing edges 
-
-        let tree = new SuffixTree('');
-        for(let c of contigs) {
-            tree.add(c);
+        } else if(type === 'dynamic'){
+            //TODO
+        } else {
+            //TODO -? throw error?
         }
+    }
 
-        return this.greedy_hpath(contigs, adj_matrix);
+    createGraphFromMatrix(contigs, adj_matrix){
+        this.clearGraph();
+        for (let i = 0; i < contigs.length; ++i) {
+            for (let j = 0; j < contigs.length; ++j) {
+                if( adj_matrix.get([i,j]) > 0){
+                    this.addLink(contigs[i],contigs[j]);
+                }
+            }
+        }
     }
 
     overlap_naive(contigs, l, k) { // l - minimal overlap size ; k - maximal overlap size
@@ -283,7 +304,7 @@ export default class ChartService {
     }
 
     testOlcAssembly() {
-        let seq = this.olc_assembly(['XTTG', 'TTGG', 'TGGT', 'TGXG', 'GGTT', 'TTGX', 'GTTG', ], 3, 4);
+        let seq = this.olc_assembly(['XTTG', 'TTGG', 'TGGT', 'TGXG', 'GGTT', 'TTGX', 'GTTG', ], 3, 4, 'greedy', 'none');
         console.log(seq);
     }
 }
