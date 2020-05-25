@@ -15,6 +15,9 @@ export default class NewChart {
         this.$scope.$on('updateGraph', (event, dataset) => {
             this.update(dataset);
         });
+        this.$scope.$on('clearGraph', (event) => {
+            this.clearGraph();
+        });
     };
 
     clearGraph() {
