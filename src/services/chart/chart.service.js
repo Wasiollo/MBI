@@ -1,5 +1,6 @@
 import * as math from 'mathjs';
 import * as _ from 'lodash';
+import { or } from 'angular-ui-router';
 
 class SuffixTree {
     constructor(str) {
@@ -31,7 +32,7 @@ class SuffixTree {
         for (let i = 0; i < str.length; ++i) {
             this.addSingleChar(str[i]);
         }
-        this.addSingleChar('$' + this.last_node_id);
+        this.addSingleChar('$' + this.last_string_idx);
     }
 
     addSingleChar(char) {
@@ -108,7 +109,7 @@ class SuffixTree {
                     }
                     edge.end = edge.start + extension - 1;
                     edge.children[char] = end_child;
-                    end.children[match_char] = split_child;
+                    edge.children[match_char] = split_child;
 
                     if (prev_internal_node) {
                         prev_internal_node.link = edge;
@@ -145,6 +146,59 @@ class SuffixTree {
             id: this.last_node_id,
             parent
         }
+    }
+
+    findOverlaps(contigs) {
+        let overlaps = math.zeros(contigs.length, contigs.length);
+        for(let c in contigs) {
+            let contig = contigs[c];
+            let firstChar = contig[0];
+            let cIndex = 0;
+            let child = this.root.children[firstChar];
+            if( !child) {
+                continue;
+            }
+
+            let nodesToCheck = [child];
+
+            while(nodesToCheck.length != 0) {
+                let node = nodesToCheck.shift();
+
+                let nodeLenght = this.getNodeLength(node);
+                for(let i = 0; i < nodeLenght; ++i) {
+                    let currChar = contig[cIndex + i];
+                    let nodeChar = this.text[node.start + i];
+                    if(nodeChar.length == 2 && nodeChar[0] === '$') {
+                        if(nodeChar[1] != c) {
+                            overlaps.set([nodeChar[1], c], cIndex + i);
+                        }
+                        break;
+                    }
+    
+                }
+                cIndex += nodeLenght;
+
+                if(cIndex == contig.length) {
+                    continue;
+                } else {
+                    for(let childNode in node.children) {
+                        if(childNode.length > 1) {
+                            let o = parseInt(childNode.slice(1));
+                            if(o != parseInt(c)) {
+                                overlaps.set([o, parseInt(c)], cIndex);
+                            }
+                        } else {
+                            if(contig[cIndex] == childNode) {
+                                nodesToCheck.push(node.children[childNode]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        return overlaps;
     }
 }
 
@@ -316,6 +370,19 @@ export default class ChartService {
             for (let c of contigs) {
                 tree.add(c);
             }
+            let adj_matrix = tree.findOverlaps(contigs);
+
+            if(graphShow === 'beforeReduction'){
+                this.createGraphFromMatrix(contigs, adj_matrix);
+            }
+
+            let reducted_mat = this.transitive_reduction(adj_matrix);
+
+            if(graphShow === 'afterReduction'){
+                this.createGraphFromMatrix(contigs, reducted_mat);
+            }
+            
+            return this.greedy_hpath(contigs, reducted_mat);
 
         } else if (type === 'dynamic') {
             let dynamic = new Dynamic(contigs);
