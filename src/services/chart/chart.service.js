@@ -381,7 +381,7 @@ export default class ChartService {
 
 
     greedy_hpath(contigs, adj_matrix) {
-        let k_length = contigs[0].length
+        let k_length = contigs.length
         let first_index = Math.round(Math.random() * k_length);
 
         let sequence = contigs[first_index];
