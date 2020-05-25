@@ -122,7 +122,6 @@ export default class NewChart {
             })
             .style("pointer-events", "none")
             .text(function (d, i) {
-                console.log(d);
                 return '' + d.count
             });
 

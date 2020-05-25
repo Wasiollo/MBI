@@ -6,29 +6,29 @@ class SuffixTree {
         this.root = {
             id: 0,
             children: {},
-            start:0
+            start: 0
         }
         this.activeNode = this.root;
         this.curr_pos = -1; //left
         this.look_ahead = -1;   //right
         this.last_string_idx = -1;  //idx
-        this.strings_list = {};     
+        this.strings_list = {};
         this.last_node_id = 0;  //lastID
         this.skip = 0;
         this.text = [];
-        if(str) {
+        if (str) {
             this.add(str);
         }
     }
 
-    add (str) {
-        if(!(typeof str === 'string') || str.length == 0){
+    add(str) {
+        if (!(typeof str === 'string') || str.length == 0) {
             return;
         }
         this.last_string_idx += 1;
         this.strings_list[this.last_string_idx] = str;
 
-        for(let i = 0; i < str.length; ++i) {
+        for (let i = 0; i < str.length; ++i) {
             this.addSingleChar(str[i]);
         }
         this.addSingleChar('$' + this.last_node_id);
@@ -40,29 +40,29 @@ class SuffixTree {
 
         let prev_internal_node;
 
-        while(this.curr_pos < this.look_ahead) {
+        while (this.curr_pos < this.look_ahead) {
             let skipped = this.curr_pos + this.skip;
 
-            if(skipped < this.look_ahead) {
+            if (skipped < this.look_ahead) {
                 let edge_char = this.text[skipped + 1];
                 let edge = this.activeNode.children[edge_char];
-                if(edge) {
+                if (edge) {
                     let edge_length = this.getNodeLength(edge);
                     let extension = this.look_ahead - (this.curr_pos + this.skip);
 
-                    while(edge_length < extension) {
+                    while (edge_length < extension) {
                         this.activeNode = edge;
                         this.skip += edge_length;
                         extension = this.look_ahead - (this.curr_pos + this.skip);
 
-                        if(!extension) {
+                        if (!extension) {
                             break;
                         }
 
                         edge_char = this.text[this.curr_pos + this.skip + 1];
                         edge = this.activeNode.children[edge_char];
 
-                        if(!edge) {
+                        if (!edge) {
                             break;
                         }
 
@@ -76,8 +76,8 @@ class SuffixTree {
             skipped = this.curr_pos + this.skip;
             let extension = this.look_ahead - skipped - 1;
 
-            if(extension <= 0) {
-                if(node.children[char]) {
+            if (extension <= 0) {
+                if (node.children[char]) {
                     return true;
                 } else {
                     node.children[char] = this.createNode(this.look_ahead, node);
@@ -91,17 +91,17 @@ class SuffixTree {
                 const extension = this.look_ahead - skipped - 1;
                 const match_char = this.text[edge.start + extension];
 
-                if(char === match_char) {
+                if (char === match_char) {
                     return;
                 } else {
                     const end_child = this.createNode(this.look_ahead, edge);
                     const split_child = this.createNode(edge.start + extension, edge);
 
-                    if(edge.end !== undefined) {
+                    if (edge.end !== undefined) {
                         const split_child_length = this.getNodeLength(edge) - extension;
                         split_child.end = split_child.start + split_child_length - 1;
 
-                        for(let child_char in edge.children) {
+                        for (let child_char in edge.children) {
                             split_child.children[child_char] = edge.children[child_char];
                             delete edge.children[child_char];
                         }
@@ -110,18 +110,18 @@ class SuffixTree {
                     edge.children[char] = end_child;
                     end.children[match_char] = split_child;
 
-                    if(prev_internal_node) {
+                    if (prev_internal_node) {
                         prev_internal_node.link = edge;
                     }
                     prev_internal_node = edge;
 
-                    if(!node.link || node.link.parent === this.root) {
+                    if (!node.link || node.link.parent === this.root) {
                         this.activeNode = this.root;
                     } else {
                         this.activeNode = node.link;
                     }
 
-                    if(this.activeNode === this.root) {
+                    if (this.activeNode === this.root) {
                         this.skip = 0;
                     } else {
                         this.skip -= 1;
@@ -148,6 +148,92 @@ class SuffixTree {
     }
 }
 
+class Dynamic {
+    constructor(contigs) {
+        this.contigs = contigs;
+    }
+
+    sFunction(a, b) {
+        if (a === "-" || b === "-") {
+            return 8;
+        } else if (
+            (a === 'G' && b === 'A') ||
+            (a === 'A' && b === 'G') ||
+            (a === 'C' && b === 'T') ||
+            (a === 'T' && b === 'C')
+        ) {
+            return 2;
+        } else if (a === b) {
+            return 0;
+        } else {
+            return 4;
+        }
+    }
+
+    dFunction(first, second, dMatrix, i, j) {
+        const a = dMatrix.get([i - 1, j]) + this.sFunction(first[i - 1], "-");
+        const b = dMatrix.get([i, j - 1]) + this.sFunction("-", second[j - 1]);
+        const c = dMatrix.get([i - 1, j - 1]) + this.sFunction(first[i], second[j]);
+        return math.min(a, b, c);
+    }
+
+    // l -> lowest level of overlap to notice :)
+    createAdjMatrix(l) {
+        let resultMatrix = math.zeros(this.contigs.length, this.contigs.length);
+        for (let i = 0; i < this.contigs.length; ++i) {
+            for (let j = i + 1; j < this.contigs.length; ++j) {
+                let iOverlap = this.getOverlap(this.contigs[i], this.contigs[j], l);
+                let jOverlap = this.getOverlap(this.contigs[j], this.contigs[i], l);
+                if (iOverlap > jOverlap) {
+                    resultMatrix.set([i, j], iOverlap);
+                } else {
+                    resultMatrix.set([j, i], jOverlap);
+                }
+            }
+        }
+        return resultMatrix;
+    }
+
+    getOverlap(first, second, l) {
+        let firstD = "-" + first;
+        let secondD = "-" + second;
+        let dMatrix = math.zeros(firstD.length, secondD.length);
+        for (let i = 1; i < secondD.length; ++i) {
+            dMatrix.set([0, i], Infinity)
+        }
+        for (let i = 1; i < firstD.length; ++i) {
+            for (let j = 1; j < secondD.length; ++j) {
+                dMatrix.set([i, j], this.dFunction(firstD, secondD, dMatrix, i, j));
+            }
+        }
+        let resultTable = []
+        for (let j = 1; j < secondD.length; ++j) {
+            /* handling mistakes in sequence
+            let resultJ = j;
+            let resultK = dMatrix.get([firstD.length - 1, j]);
+            for(let k = 0 ; k <= j ; ++k){
+                let resultValue = dMatrix.get([firstD.length - 1 - k, j - k])
+                if(resultValue !== resultK){
+                    --resultJ;
+                    resultK = resultValue;
+                }
+            }
+            if(resultJ > j/2) {
+                resultTable[j] = resultJ;
+            } else {
+                resultTable[j] = 0;
+            }*/
+            let currentValue = dMatrix.get([firstD.length - 1, j]);
+            if (currentValue === 0 && j >= l) {
+                resultTable[j] = j
+            } else {
+                resultTable[j] = 0;
+            }
+        }
+        return math.max(resultTable);
+    }
+}
+
 export default class ChartService {
     constructor($rootScope) {
         'ngInject';
@@ -163,8 +249,9 @@ export default class ChartService {
         this.rootScope.$broadcast('clearGraph');
     }
 
-    assembly(readsBuffer, type, graphShow){
-        return this.olc_assembly(readsBuffer, 2, readsBuffer[0].length , type, graphShow);
+    assembly(readsBuffer, type, graphShow) {
+        //l (drugi parametr) było wcześniej 2 -> nie wiem czy ruszać na pewno :D
+        return this.olc_assembly(readsBuffer, readsBuffer[0].length / 2, readsBuffer[0].length, type, graphShow);
     }
 
     ajd_to_path_matrix(adj) {
@@ -175,15 +262,15 @@ export default class ChartService {
             for (let j = 0; j < i; ++j) {
                 path_mat_i = math.multiply(path_mat_i, adj);
             }
-            path_mat = math.add(path_mat, path_mat_i); 
+            path_mat = math.add(path_mat, path_mat_i);
         }
 
         path_mat.map(function (value, index, matrix) {
             matrix.set(index, value > 0 ? 1 : 0);
         });
 
-        for(let i = 0 ; i < n ; ++i) {
-            path_mat.set([i,i], 0);
+        for (let i = 0; i < n; ++i) {
+            path_mat.set([i, i], 0);
         }
         return path_mat;
 
@@ -192,17 +279,17 @@ export default class ChartService {
     transitive_reduction(mat) {
         let ret_mat = math.matrix(mat);
         const s = math.size(mat)._data[0];
-        for(let j = 0; j < s; ++j) {
-            for(let i = 0; i < s; ++i) {
-                if(ret_mat.get([i,j]) != 0) {
-                    for(let k = 0; k < s; ++k) {
-                        if(ret_mat.get([j,k]) != 0 ) {
-                            ret_mat.set([i,k], 0);
+        for (let j = 0; j < s; ++j) {
+            for (let i = 0; i < s; ++i) {
+                if (ret_mat.get([i, j]) != 0) {
+                    for (let k = 0; k < s; ++k) {
+                        if (ret_mat.get([j, k]) != 0) {
+                            ret_mat.set([i, k], 0);
                         }
                     }
 
                 }
-                
+
             }
         }
         return ret_mat;
@@ -210,33 +297,46 @@ export default class ChartService {
 
     olc_assembly(contigs, l, k, type, graphShow) {
 
-        if(type === 'greedy'){
-        let adj_matrix = this.overlap_naive(contigs, l, k);
-            if(graphShow === 'beforeReduction'){
+        if (type === 'greedy') {
+            let adj_matrix = this.overlap_naive(contigs, l, k);
+            console.table(adj_matrix._data);
+            if (graphShow === 'beforeReduction') {
                 this.createGraphFromMatrix(contigs, adj_matrix);
             }
             let reducted_mat = this.transitive_reduction(adj_matrix);
 
-            if(graphShow === 'afterReduction'){
+            if (graphShow === 'afterReduction') {
                 this.createGraphFromMatrix(contigs, reducted_mat);
             }
 
             return this.greedy_hpath(contigs, reducted_mat);
-        } else if(type === 'suffix'){
+        } else if (type === 'suffix') {
             //TODO
             let tree = new SuffixTree('');
-            for(let c of contigs) {
+            for (let c of contigs) {
                 tree.add(c);
             }
 
-        } else if(type === 'dynamic'){
-            //TODO
+        } else if (type === 'dynamic') {
+            let dynamic = new Dynamic(contigs);
+            let adj_matrix = dynamic.createAdjMatrix(l);
+            console.table(adj_matrix._data);
+            if (graphShow === 'beforeReduction') {
+                this.createGraphFromMatrix(contigs, adj_matrix);
+            }
+            let reducted_mat = this.transitive_reduction(adj_matrix);
+
+            if (graphShow === 'afterReduction') {
+                this.createGraphFromMatrix(contigs, reducted_mat);
+            }
+
+            return this.greedy_hpath(contigs, reducted_mat);
         } else {
             //TODO -? throw error?
         }
     }
 
-    createGraphFromMatrix(contigs, adj_matrix){
+    createGraphFromMatrix(contigs, adj_matrix) {
         let dataset = {
             nodes: [],
             edges: []
@@ -247,8 +347,8 @@ export default class ChartService {
         })
         for (let i = 0; i < contigs.length; ++i) {
             for (let j = 0; j < contigs.length; ++j) {
-                let currentCount = adj_matrix.get([i,j]);
-                if( currentCount > 0) {
+                let currentCount = adj_matrix.get([i, j]);
+                if (currentCount > 0) {
                     dataset.edges.push({source: i, target: j, count: currentCount})
                 }
             }
@@ -266,7 +366,7 @@ export default class ChartService {
                     if (index === -1) {
                         continue;
                     } else if (index === contigs[suf_i].length - l) {
-                        adj_matrix.set([suf_i,pre_i], l);
+                        adj_matrix.set([suf_i, pre_i], l);
                     } else if (index < contigs[suf_i].length - l && (contigs[suf_i].length - index) < k) {
                         if (contigs[suf_i].endsWith(contigs[pre_i].slice(0, contigs[suf_i].length - index))) {
                             adj_matrix.set([suf_i, pre_i], contigs[suf_i].length - index);
@@ -294,7 +394,7 @@ export default class ChartService {
             let max_overlap = -1;
             for (let i of remaining_indexes) {
                 if (adj_matrix.get([last_index, i]) > max_overlap) {
-                    max_overlap = adj_matrix.get([last_index,i]);
+                    max_overlap = adj_matrix.get([last_index, i]);
                     max_index = i;
                 }
             }
@@ -313,7 +413,7 @@ export default class ChartService {
     }
 
     testOlcAssembly() {
-        let seq = this.olc_assembly(['XTTG', 'TTGG', 'TGGT', 'TGXG', 'GGTT', 'TTGX', 'GTTG', ], 3, 4, 'greedy', 'none');
+        let seq = this.olc_assembly(['XTTG', 'TTGG', 'TGGT', 'TGXG', 'GGTT', 'TTGX', 'GTTG',], 3, 4, 'greedy', 'none');
         console.log(seq);
     }
 }
