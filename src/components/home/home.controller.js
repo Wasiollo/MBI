@@ -18,6 +18,7 @@ export default class HomeController {
         this.graphAlgorithm = this.GREEDY.value;
         this.graphAlgorithms = [this.GREEDY, this.SUFFIX, this.DYNAMIC]
         this.resultSequence = "";
+        this.stepByStepMode = false;
     };
 
 
@@ -70,12 +71,32 @@ export default class HomeController {
         this.chartService.assembly(this.readsBuffer, this.graphAlgorithm, when);
     }
 
+    stepByStep(){
+        this.chartService.assembly_step_by_step(this.readsBuffer, this.graphAlgorithm);
+        this.stepByStepMode = true;
+        this.clearGraph();
+    }
+
+    nextStep() {
+        let canContinue = this.chartService.nextStep();
+        if (canContinue === false){
+            this.stepByStepMode = false;
+        }
+    }
+
+    disableButtonsStepByStep() {
+        this.stepByStepMode = false;
+    }
+
     assembly() {
         this.resultSequence = this.chartService.assembly(this.readsBuffer, this.graphAlgorithm, 'none');
     }
 
     clearAll() {
         this.readsBuffer = [];
+        this.clearGraph();
+    }
+    clearGraph() {
         this.chartService.clearGraph();
     }
 

@@ -62,10 +62,10 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <button class="btn btn-light" onclick="stepByStep('graphUserDimensionInput')">Krok po kroku
+                    <button class="btn btn-light" ng-Click="$ctrl.stepByStep()">Krok po kroku
                     </button>
-                    <button disabled class="btn btn-light" onclick="nextStep()">Dalej</button>
-                    <button disabled class="btn btn-light" onclick="disableButtonsStepByStep()">Stop</button>
+                    <button ng-disabled="!$ctrl.stepByStepMode" class="btn btn-light" ng-click="$ctrl.nextStep()">Dalej</button>
+                    <button ng-disabled="!$ctrl.stepByStepMode" class="btn btn-light" ng-click="$ctrl.disableButtonsStepByStep()">Stop</button>
                     <button class="btn btn-light" ng-click="$ctrl.generateGraph('afterReduction')">Po reduckji</button>
                     <button class="btn btn-light" ng-click="$ctrl.assembly()">Wyznacz ścieżkę</button>
                     <label class="col-form-label" for="resultSequence" >Otrzymana sekwencja:</label>

@@ -231,21 +231,28 @@ class Dynamic {
         return math.min(a, b, c);
     }
 
-    // l -> lowest level of overlap to notice :)
-    createAdjMatrix(l) {
+    createAdjMatrix(l){
         let resultMatrix = math.zeros(this.contigs.length, this.contigs.length);
+        this.createAdjQueue(l).forEach(e => {
+            resultMatrix.set([e.source, e.target], e.value);
+        })
+        return resultMatrix;
+    }
+    // l -> lowest level of overlap to notice :)
+    createAdjQueue(l) {
+        let resultQueue = [];
         for (let i = 0; i < this.contigs.length; ++i) {
             for (let j = i + 1; j < this.contigs.length; ++j) {
                 let iOverlap = this.getOverlap(this.contigs[i], this.contigs[j], l);
                 let jOverlap = this.getOverlap(this.contigs[j], this.contigs[i], l);
                 if (iOverlap > jOverlap) {
-                    resultMatrix.set([i, j], iOverlap);
+                    resultQueue.push({source: i, target: j, value: iOverlap});
                 } else {
-                    resultMatrix.set([j, i], jOverlap);
+                    resultQueue.push({source: j, target: i, value: jOverlap});
                 }
             }
         }
-        return resultMatrix;
+        return resultQueue;
     }
 
     getOverlap(first, second, l) {
@@ -308,6 +315,10 @@ export default class ChartService {
         return this.olc_assembly(readsBuffer, readsBuffer[0].length / 2, readsBuffer[0].length, type, graphShow);
     }
 
+    assembly_step_by_step(readsBuffer, type) {
+        return this.olc_assembly_step_by_step(readsBuffer, readsBuffer[0].length / 2, readsBuffer[0].length, type);
+    }
+
     ajd_to_path_matrix(adj) {
         const n = math.size(adj)._data[0];
         let path_mat = math.matrix(adj);
@@ -349,6 +360,35 @@ export default class ChartService {
         return ret_mat;
     }
 
+    olc_assembly_step_by_step(contigs, l, k, type) {
+        if (type === 'greedy') {
+
+        } else if (type === 'suffix') {
+
+        } else if (type === 'dynamic') {
+            let dynamic = new Dynamic(contigs);
+            this.stepQueue =  dynamic.createAdjQueue(l);
+            this.contigs = contigs;
+            this.currentStep = 1;
+        } else {
+            //TODO -? throw error?
+        }
+    }
+
+    nextStep(){
+        let adjMatrix = math.zeros(this.contigs.length, this.contigs.length);
+        for (let i = 0 ; i < this.currentStep ; ++i){
+            let currentQueueValue = this.stepQueue[i];
+            console.log(currentQueueValue);
+            adjMatrix.set([currentQueueValue.source, currentQueueValue.target], currentQueueValue.value);
+        }
+        console.log(this.contigs);
+        console.log(this.stepQueue);
+        this.createGraphFromMatrix(this.contigs, adjMatrix);
+        this.currentStep+=1;
+        return this.currentStep <= this.stepQueue.length;
+    }
+
     olc_assembly(contigs, l, k, type, graphShow) {
 
         if (type === 'greedy') {
@@ -381,7 +421,7 @@ export default class ChartService {
             if(graphShow === 'afterReduction'){
                 this.createGraphFromMatrix(contigs, reducted_mat);
             }
-            
+
             return this.greedy_hpath(contigs, reducted_mat);
 
         } else if (type === 'dynamic') {
