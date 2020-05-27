@@ -338,28 +338,6 @@ export default class ChartService {
         return this.olc_assembly_step_by_step(readsBuffer, overlapMin, readsBuffer[0].length, type);
     }
 
-    ajd_to_path_matrix(adj) {
-        const n = math.size(adj)._data[0];
-        let path_mat = math.matrix(adj);
-        for (let i = 1; i < n; ++i) {
-            let path_mat_i = math.matrix(adj);
-            for (let j = 0; j < i; ++j) {
-                path_mat_i = math.multiply(path_mat_i, adj);
-            }
-            path_mat = math.add(path_mat, path_mat_i);
-        }
-
-        path_mat.map(function (value, index, matrix) {
-            matrix.set(index, value > 0 ? 1 : 0);
-        });
-
-        for (let i = 0; i < n; ++i) {
-            path_mat.set([i, i], 0);
-        }
-        return path_mat;
-
-    }
-
     transitive_reduction(mat) {
         let ret_mat = math.matrix(mat);
         const s = math.size(mat)._data[0];
