@@ -149,6 +149,7 @@ class SuffixTree {
     }
 
     findOverlaps(contigs, minOverlap) {
+        let overlaps_list = [];
         let overlaps = math.zeros(contigs.length, contigs.length);
         for(let c in contigs) {
             let contig = contigs[c];
@@ -179,6 +180,7 @@ class SuffixTree {
                         if(nodeChar.length == 2 && nodeChar[0] === '$') {
                             if(nodeChar[1] != c && cIndex + i >= minOverlap) {
                                 overlaps.set([parseInt(nodeChar[1]), parseInt(c)], cIndex + i);
+                                overlaps_list.push({source: parseInt(nodeChar[1]), target: parseInt(c), value: cIndex + i});
                                 continue;
                             } 
                         } 
@@ -198,6 +200,7 @@ class SuffixTree {
                             let o = parseInt(childNode.slice(1));
                             if(o != parseInt(c) && cIndex >= minOverlap) {
                                 overlaps.set([o, parseInt(c)], cIndex);
+                                overlaps_list.push({source: o, target: parseInt(c), value: cIndex});
                             }
                         } else {
                             if(contig[cIndex] == childNode) {
@@ -210,7 +213,7 @@ class SuffixTree {
         }
 
 
-        return overlaps;
+        return [overlaps, overlaps_list];
     }
 }
 
@@ -382,7 +385,12 @@ export default class ChartService {
         if (type === 'greedy') {
             this.stepQueue = this.overlap_naive_adj_matrix_queue(contigs, l, k);
         } else if (type === 'suffix') {
-
+            let tree = new SuffixTree('');
+            for (let c of contigs) {
+                tree.add(c);
+            }
+            let pair = tree.findOverlaps(contigs, l);
+            this.stepQueue = pair[1];
         } else if (type === 'dynamic') {
             let dynamic = new Dynamic(contigs);
             this.stepQueue = dynamic.createAdjQueue(l);
@@ -424,7 +432,9 @@ export default class ChartService {
             for (let c of contigs) {
                 tree.add(c);
             }
-            let adj_matrix = tree.findOverlaps(contigs, l);
+            let pair = tree.findOverlaps(contigs, l);
+            let adj_matrix = pair[0];
+            let overlaps = pair[1];
 
             if(graphShow === 'beforeReduction'){
                 this.createGraphFromMatrix(contigs, adj_matrix);
@@ -495,13 +505,15 @@ export default class ChartService {
                         if (index === contigs[suf_i].length - l) {
                             resultQueue.push({source: suf_i, target: pre_i, value: l});
                             break;
-                        } else if (index < contigs[suf_i].length - l && (contigs[suf_i].length - index) < k) {
+                        } else if (index < contigs[suf_i].length - l && (contigs[suf_i].length - index) <= k) {
                             if (contigs[suf_i].endsWith(contigs[pre_i].slice(0, contigs[suf_i].length - index))) {
                                 resultQueue.push({source: suf_i, target: pre_i, value: contigs[suf_i].length - index});
                                 break;
                             } else {
                                 index = contigs[suf_i].indexOf(contigs[pre_i].slice(0, l), index + 1);
                             }
+                        } else {
+                            index = contigs[suf_i].indexOf(contigs[pre_i].slice(0, l), index + 1);
                         }
                     }
                 }
