@@ -50,7 +50,7 @@ export default class HomeController {
                 const fileContent = event.target.result;
                 let readsArray = fileContent.split(/>.*\r\n/);
                 for (let i = 0; i < readsArray.length; ++i) {
-                    readsArray[i] = readsArray[i].replaceAll('\r', '').replaceAll('\n', '');
+                    readsArray[i] = readsArray[i].replace(/(?:\\[rn])+/g, "");
                 }
                 readsArray = readsArray.filter(function (el) {
                     return el !== "";
