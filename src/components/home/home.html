@@ -4,9 +4,16 @@
             <div class="card-header bg-success text-white" id="header">
                 <div class="form-row mb-2">
                     <label class="col-3 col-form-label">Sposób wprowadzenia danych</label>
-                    <button class="btn btn-light col-2" ng-class="{'active': $ctrl.currentInputMethod == 'user'}" ng-click="$ctrl.setInputMethod('user')">Manualnie </button>
-                    <button class="btn btn-light col-2 ml-2" ng-class="{'active': $ctrl.currentInputMethod == 'file'}"ng-click="$ctrl.setInputMethod('file')">Plik FASTA</button>
-                    <button class="btn btn-light col-2 ml-2" ng-class="{'active': $ctrl.currentInputMethod == 'example'}"ng-click="$ctrl.setInputMethod('example')">Przykładowe dane</button>
+                    <button class="btn btn-light col-2" ng-class="{'active': $ctrl.currentInputMethod == 'user'}"
+                            ng-click="$ctrl.setInputMethod('user')">Manualnie
+                    </button>
+                    <button class="btn btn-light col-2 ml-2" ng-class="{'active': $ctrl.currentInputMethod == 'file'}"
+                            ng-click="$ctrl.setInputMethod('file')">Plik FASTA
+                    </button>
+                    <button class="btn btn-light col-2 ml-2"
+                            ng-class="{'active': $ctrl.currentInputMethod == 'example'}"
+                            ng-click="$ctrl.setInputMethod('example')">Przykładowe dane
+                    </button>
                 </div>
                 <div class="row mb-2">
                     <div class="col-6">
@@ -14,32 +21,37 @@
                             <label class="col-3 col-form-label" for="readInput">Nowy odczyt:</label>
                             <input class="form-control col-5" type="text" id="readInput" ng-model="$ctrl.readInput"
                                    ng-value="$ctrl.readInput"/>
-                            <button class="btn btn-light col-3 ml-2" ng-click="$ctrl.addRead()">Dodaj
+                            <button ng-disabled="$ctrl.stepByStepMode" class="btn btn-light col-3 ml-2"
+                                    ng-click="$ctrl.addRead()">Dodaj
                             </button>
                         </div>
                         <div ng-show="$ctrl.currentInputMethod == 'file'" class="form-row">
                             <label class="col-3 col-form-label" for="readInput">Plik z danymi:</label>
                             <input class="form-control file col-5" type="file" id="fileInput" accept=".fa"/>
-                            <button class="btn btn-light col-3 ml-2" ng-click="$ctrl.loadFile()">Załaduj
+                            <button ng-disabled="$ctrl.stepByStepMode" class="btn btn-light col-3 ml-2"
+                                    ng-click="$ctrl.loadFile()">Załaduj
                             </button>
                         </div>
                         <div ng-show="$ctrl.currentInputMethod == 'example'" class="form-row">
-                            <button class="btn btn-light col-11 ml-2" ng-click="$ctrl.loadExampleData()">
+                            <button ng-disabled="$ctrl.stepByStepMode" class="btn btn-light col-11 ml-2"
+                                    ng-click="$ctrl.loadExampleData()">
                                 Załaduj przykładowe dane
                             </button>
                         </div>
                         <div class="form-row mt-2">
                             <label class="col-3 col-form-label" for="overlapMin">Min. Overlap:</label>
-                            <input class="form-control overlap-min" type="number" min="2" id="overlapMin" ng-model="$ctrl.overlapMin"
+                            <input ng-disabled="$ctrl.stepByStepMode" class="form-control overlap-min" type="number"
+                                   min="2" id="overlapMin" ng-model="$ctrl.overlapMin"
                                    ng-value="$ctrl.overlapMin"/>
                         </div>
                         <div class="form-row mt-2">
                             <label class="col-3 col-form-label" for="graphAlgorithm">Algorytm:</label>
-                            <select class="form-control col-5" id="graphAlgorithm" ng-model="$ctrl.graphAlgorithm"
+                            <select ng-disabled="$ctrl.stepByStepMode" class="form-control col-5" id="graphAlgorithm"
+                                    ng-model="$ctrl.graphAlgorithm"
                                     ng-options="algorithm.value as algorithm.label for algorithm in $ctrl.graphAlgorithms">
-                                <option value="?">--Select User--</option>
                             </select>
-                            <button class="btn btn-light col-3 ml-2" ng-click="$ctrl.generateGraph('beforeReduction')">
+                            <button ng-disabled="$ctrl.stepByStepMode" class="btn btn-light col-3 ml-2"
+                                    ng-click="$ctrl.generateGraph('beforeReduction')">
                                 Generuj graf
                             </button>
                         </div>
@@ -54,7 +66,8 @@
                                     <li class="list-group-item py-0" ng-if="$ctrl.readsBuffer.length === 0">
                                         odczyt
                                     </li>
-                                    <li class="list-group-item text-dark py-0" ng-repeat="read in $ctrl.readsBuffer" ng-model="read">
+                                    <li class="list-group-item text-dark py-0" ng-repeat="read in $ctrl.readsBuffer"
+                                        ng-model="read">
                                         {{read}}
                                     </li>
                                 </ul>
@@ -66,14 +79,26 @@
                     </div>
                 </div>
                 <div class="form-row">
-                    <button class="btn btn-light" ng-Click="$ctrl.stepByStep()">Krok po kroku
+                    <button ng-disabled="$ctrl.stepByStepMode" class="btn btn-light" ng-Click="$ctrl.stepByStep()">Krok
+                        po kroku
                     </button>
-                    <button ng-disabled="!$ctrl.stepByStepMode" class="btn btn-light ml-2" ng-click="$ctrl.nextStep()">Dalej</button>
-                    <button ng-disabled="!$ctrl.stepByStepMode" class="btn btn-light ml-2" ng-click="$ctrl.disableButtonsStepByStep()">Stop</button>
-                    <button class="btn btn-light ml-2" ng-click="$ctrl.generateGraph('afterReduction')">Po redukcji</button>
-                    <button class="btn btn-light ml-2" ng-click="$ctrl.assembly()">Wyznacz ścieżkę</button>
-                    <label class="col-form-label col-2 ml-5" for="resultSequence" >Otrzymana sekwencja:</label>
-                    <input class="form-control col-3" disabled type="text" id="resultSequence" ng-model="$ctrl.resultSequence"/>
+                    <button ng-disabled="!$ctrl.stepByStepMode" class="btn btn-light ml-2" ng-click="$ctrl.nextStep()">
+                        Dalej
+                    </button>
+                    <button ng-disabled="!$ctrl.stepByStepMode" class="btn btn-light ml-2"
+                            ng-click="$ctrl.disableButtonsStepByStep()">Stop
+                    </button>
+                    <button ng-disabled="$ctrl.stepByStepMode" class="btn btn-light ml-2"
+                            ng-click="$ctrl.generateGraph('afterReduction')">Po redukcji
+                    </button>
+                    <button ng-disabled="$ctrl.stepByStepMode" class="btn btn-light ml-2"
+                            title="Sekwencja jest wyznaczana zawsze na podstawie zredukowanego grafu"
+                            ng-click="$ctrl.assembly()">Wyznacz ścieżkę
+                    </button>
+                    <label ng-disabled="$ctrl.stepByStepMode" class="col-form-label col-2 ml-5" for="resultSequence">Otrzymana
+                        sekwencja:</label>
+                    <input class="form-control col-3" disabled type="text" id="resultSequence"
+                           ng-model="$ctrl.resultSequence"/>
                 </div>
 
 

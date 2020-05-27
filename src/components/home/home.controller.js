@@ -99,11 +99,13 @@ export default class HomeController {
 
     assembly() {
         this.resultSequence = this.chartService.assembly(this.readsBuffer, this.graphAlgorithm, 'none', this.overlapMin);
+        this.toastr.success("Otrzymana sekwencja to: " + this.resultSequence);
     }
 
     clearAll() {
         this.readsBuffer = [];
         this.clearGraph();
+        this.stepByStepMode = false;
     }
 
     clearGraph() {

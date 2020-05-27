@@ -384,7 +384,7 @@ export default class ChartService {
             adjMatrix.set([currentQueueValue.source, currentQueueValue.target], currentQueueValue.value);
         }
         let currentQueueValue = this.stepQueue[this.currentStep - 1];
-        this.toastr.success("Dodano krawędź z " + currentQueueValue.source + " do " + currentQueueValue.target + " o wartości " + currentQueueValue.value);
+        this.toastr.success("Dodano krawędź z " + this.contigs[currentQueueValue.source] + " do " + this.contigs[currentQueueValue.target] + " o wartości " + currentQueueValue.value);
 
         this.createGraphFromMatrix(this.contigs, adjMatrix);
         this.currentStep+=1;
