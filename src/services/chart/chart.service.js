@@ -360,17 +360,17 @@ export default class ChartService {
     }
 
     olc_assembly_step_by_step(contigs, l, k, type) {
+        this.contigs = contigs;
+        this.currentStep = 1;
         if (type === 'greedy') {
-
+            this.stepQueue = this.overlap_naive_adj_matrix_queue(contigs, l, k);
         } else if (type === 'suffix') {
 
         } else if (type === 'dynamic') {
             let dynamic = new Dynamic(contigs);
-            this.stepQueue =  dynamic.createAdjQueue(l);
-            this.contigs = contigs;
-            this.currentStep = 1;
+            this.stepQueue = dynamic.createAdjQueue(l);
         } else {
-            //TODO -? throw error?
+            throw "Illegal operation";
         }
     }
 
@@ -381,8 +381,7 @@ export default class ChartService {
             console.log(currentQueueValue);
             adjMatrix.set([currentQueueValue.source, currentQueueValue.target], currentQueueValue.value);
         }
-        console.log(this.contigs);
-        console.log(this.stepQueue);
+
         this.createGraphFromMatrix(this.contigs, adjMatrix);
         this.currentStep+=1;
         return this.currentStep <= this.stepQueue.length;
@@ -460,7 +459,15 @@ export default class ChartService {
     }
 
     overlap_naive(contigs, l, k) { // l - minimal overlap size ; k - maximal overlap size
-        let adj_matrix = math.zeros(contigs.length, contigs.length);
+        let resultMatrix = math.zeros(contigs.length, contigs.length);
+        this.overlap_naive_adj_matrix_queue(contigs,l,k).forEach(e => {
+            resultMatrix.set([e.source, e.target], e.value);
+        })
+        return resultMatrix;
+    }
+
+    overlap_naive_adj_matrix_queue(contigs, l, k){
+        let resultQueue = [];
         for (let suf_i = 0; suf_i < contigs.length; suf_i++) {
             for (let pre_i = 0; pre_i < contigs.length; pre_i++) {
 
@@ -469,17 +476,17 @@ export default class ChartService {
                     if (index === -1) {
                         continue;
                     } else if (index === contigs[suf_i].length - l) {
-                        adj_matrix.set([suf_i, pre_i], l);
+                        resultQueue.push({source: suf_i, target: pre_i, value: l});
                     } else if (index < contigs[suf_i].length - l && (contigs[suf_i].length - index) < k) {
                         if (contigs[suf_i].endsWith(contigs[pre_i].slice(0, contigs[suf_i].length - index))) {
-                            adj_matrix.set([suf_i, pre_i], contigs[suf_i].length - index);
+                            resultQueue.push({source: suf_i, target: pre_i, value: contigs[suf_i].length - index});
                         }
                     }
                 }
             }
         }
 
-        return adj_matrix;
+        return resultQueue;
     }
 
 
