@@ -148,7 +148,7 @@ class SuffixTree {
         }
     }
 
-    findOverlaps(contigs) {
+    findOverlaps(contigs, minOverlap) {
         let overlaps = math.zeros(contigs.length, contigs.length);
         for(let c in contigs) {
             let contig = contigs[c];
@@ -169,7 +169,7 @@ class SuffixTree {
                     let currChar = contig[cIndex + i];
                     let nodeChar = this.text[node.start + i];
                     if(nodeChar.length == 2 && nodeChar[0] === '$') {
-                        if(nodeChar[1] != c) {
+                        if(nodeChar[1] != c && cIndex + i >= minOverlap) {
                             overlaps.set([nodeChar[1], c], cIndex + i);
                         }
                         break;
@@ -184,7 +184,7 @@ class SuffixTree {
                     for(let childNode in node.children) {
                         if(childNode.length > 1) {
                             let o = parseInt(childNode.slice(1));
-                            if(o != parseInt(c)) {
+                            if(o != parseInt(c) && cIndex >= minOverlap) {
                                 overlaps.set([o, parseInt(c)], cIndex);
                             }
                         } else {
@@ -410,7 +410,7 @@ export default class ChartService {
             for (let c of contigs) {
                 tree.add(c);
             }
-            let adj_matrix = tree.findOverlaps(contigs);
+            let adj_matrix = tree.findOverlaps(contigs, 2); // TODO let user adjust this
 
             if(graphShow === 'beforeReduction'){
                 this.createGraphFromMatrix(contigs, adj_matrix);
