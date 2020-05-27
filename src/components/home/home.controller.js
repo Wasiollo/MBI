@@ -12,9 +12,9 @@ export default class HomeController {
         this.readInput = "";
         this.readsBuffer = [];
         this.currentInputMethod = 'user';
-        this.GREEDY = {value:'greedy', label:'Zachłanny'};
-        this.SUFFIX = {value:'suffix', label:'Drzewo sufixowe'}
-        this.DYNAMIC = {value:'dynamic', label:'Progr. dynamiczne'};
+        this.GREEDY = {value: 'greedy', label: 'Zachłanny'};
+        this.SUFFIX = {value: 'suffix', label: 'Drzewo sufixowe'}
+        this.DYNAMIC = {value: 'dynamic', label: 'Progr. dynamiczne'};
         this.graphAlgorithm = this.GREEDY.value;
         this.graphAlgorithms = [this.GREEDY, this.SUFFIX, this.DYNAMIC]
         this.resultSequence = "";
@@ -64,31 +64,31 @@ export default class HomeController {
         }
     }
 
-    loadExampleData(){
+    loadExampleData() {
         this.readsBuffer = ['XTTG', 'TTGG', 'TGGT', 'TGXG', 'GGTT', 'TTGX', 'GTTG'];
     }
 
     generateGraph(when) {
-        if(this.overlapMin === undefined || this.overlapMin < 2){
+        if (this.overlapMin === undefined || this.overlapMin < 2) {
             this.toastr.error("Minimalny overlap jest niepoprawny. Musi być równy co najmniej 2.");
             return;
         }
-        this.chartService.assembly(this.readsBuffer, this.graphAlgorithm, when,this.overlapMin);
+        this.chartService.assembly(this.readsBuffer, this.graphAlgorithm, when, this.overlapMin);
     }
 
-    stepByStep(){
-        if(this.overlapMin === undefined || this.overlapMin < 2){
+    stepByStep() {
+        if (this.overlapMin === undefined || this.overlapMin < 2) {
             this.toastr.error("Minimalny overlap jest niepoprawny. Musi być równy co najmniej 2.");
             return;
         }
-        this.chartService.assembly_step_by_step(this.readsBuffer, this.graphAlgorithm,this.overlapMin);
+        this.chartService.assembly_step_by_step(this.readsBuffer, this.graphAlgorithm, this.overlapMin);
         this.stepByStepMode = true;
         this.clearGraph();
     }
 
     nextStep() {
         let canContinue = this.chartService.nextStep();
-        if (canContinue === false){
+        if (canContinue === false) {
             this.stepByStepMode = false;
         }
     }
@@ -98,13 +98,14 @@ export default class HomeController {
     }
 
     assembly() {
-        this.resultSequence = this.chartService.assembly(this.readsBuffer, this.graphAlgorithm, 'none');
+        this.resultSequence = this.chartService.assembly(this.readsBuffer, this.graphAlgorithm, 'none', this.overlapMin);
     }
 
     clearAll() {
         this.readsBuffer = [];
         this.clearGraph();
     }
+
     clearGraph() {
         this.chartService.clearGraph();
     }
