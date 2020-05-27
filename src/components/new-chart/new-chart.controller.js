@@ -185,10 +185,16 @@ export default class NewChart {
 
             edgelabels.attr('transform', function (d, i) {
                 if (d.target.x < d.source.x) {
-                    let bbox = this.getBBox();
-                    let rx = bbox.x + bbox.width / 2;
-                    let ry = bbox.y + bbox.height / 2;
-                    return 'rotate(180 ' + rx + ' ' + ry + ')';
+                    let bbox;
+                    try {
+                        bbox = this.getBBox();
+                        let rx = bbox.x + bbox.width / 2;
+                        let ry = bbox.y + bbox.height / 2;
+                        return 'rotate(180 ' + rx + ' ' + ry + ')';
+                    } catch (e) {
+                        console.log("Firefox problems");
+                        return 'rotate(0)';
+                    }
                 } else {
                     return 'rotate(0)';
                 }
