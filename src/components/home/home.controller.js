@@ -65,7 +65,7 @@ export default class HomeController {
     }
 
     loadExampleData() {
-        this.readsBuffer = ['XTTG', 'TTGG', 'TGGT', 'TGXG', 'GGTT', 'TTGX', 'GTTG'];
+        this.readsBuffer = ['ATTG', 'TTGG', 'TGGT', 'TGAG', 'GGTT', 'TTGA', 'GTTG'];
     }
 
     generateGraph(when) {
