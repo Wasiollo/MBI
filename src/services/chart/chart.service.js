@@ -159,23 +159,35 @@ class SuffixTree {
                 continue;
             }
 
-            let nodesToCheck = [child];
+            let nodesToCheck = [[child, 0]];
 
             while(nodesToCheck.length != 0) {
-                let node = nodesToCheck.shift();
+                let pair = nodesToCheck.shift();
+                let node = pair[0];
+                cIndex = pair[1];
+
+                if(node.start == 38) {
+                    console.log("here");
+                }
+
 
                 let nodeLenght = this.getNodeLength(node);
                 for(let i = 0; i < nodeLenght; ++i) {
                     let currChar = contig[cIndex + i];
                     let nodeChar = this.text[node.start + i];
-                    if(nodeChar.length == 2 && nodeChar[0] === '$') {
-                        if(nodeChar[1] != c && cIndex + i >= minOverlap) {
-                            overlaps.set([nodeChar[1], c], cIndex + i);
-                        }
+                    if(nodeChar != currChar) {
+                        if(nodeChar.length == 2 && nodeChar[0] === '$') {
+                            if(nodeChar[1] != c && cIndex + i >= minOverlap) {
+                                overlaps.set([parseInt(nodeChar[1]), parseInt(c)], cIndex + i);
+                                continue;
+                            } 
+                        } 
                         break;
                     }
     
                 }
+
+
                 cIndex += nodeLenght;
 
                 if(cIndex == contig.length) {
@@ -189,7 +201,7 @@ class SuffixTree {
                             }
                         } else {
                             if(contig[cIndex] == childNode) {
-                                nodesToCheck.push(node.children[childNode]);
+                                nodesToCheck.push([node.children[childNode], cIndex]);
                             }
                         }
                     }
@@ -478,14 +490,18 @@ export default class ChartService {
             for (let pre_i = 0; pre_i < contigs.length; pre_i++) {
 
                 if (contigs[suf_i] !== contigs[pre_i]) {
-                    let index = contigs[suf_i].lastIndexOf(contigs[pre_i].slice(0, l));
-                    if (index === -1) {
-                        continue;
-                    } else if (index === contigs[suf_i].length - l) {
-                        resultQueue.push({source: suf_i, target: pre_i, value: l});
-                    } else if (index < contigs[suf_i].length - l && (contigs[suf_i].length - index) < k) {
-                        if (contigs[suf_i].endsWith(contigs[pre_i].slice(0, contigs[suf_i].length - index))) {
-                            resultQueue.push({source: suf_i, target: pre_i, value: contigs[suf_i].length - index});
+                    let index = contigs[suf_i].indexOf(contigs[pre_i].slice(0, l), 0);
+                    while(index != -1) {
+                        if (index === contigs[suf_i].length - l) {
+                            resultQueue.push({source: suf_i, target: pre_i, value: l});
+                            break;
+                        } else if (index < contigs[suf_i].length - l && (contigs[suf_i].length - index) < k) {
+                            if (contigs[suf_i].endsWith(contigs[pre_i].slice(0, contigs[suf_i].length - index))) {
+                                resultQueue.push({source: suf_i, target: pre_i, value: contigs[suf_i].length - index});
+                                break;
+                            } else {
+                                index = contigs[suf_i].indexOf(contigs[pre_i].slice(0, l), index + 1);
+                            }
                         }
                     }
                 }
@@ -498,6 +514,9 @@ export default class ChartService {
 
     greedy_hpath(contigs, adj_matrix) {
         let k_length = contigs.length
+        if(adj_matrix == math.zeros(k_length, k_length)) {
+            console.log("adj matrix is empty");
+        }
         let first_index = Math.round(Math.random() * k_length);
 
         let sequence = contigs[first_index];
@@ -517,7 +536,7 @@ export default class ChartService {
             if (max_index !== -1) {
                 const indx = remaining_indexes.indexOf(max_index)
                 remaining_indexes.splice(indx, 1);
-                sequence += contigs[max_index].slice(max_overlap, k_length);
+                sequence += contigs[max_index].slice(max_overlap);
 
                 last_index = max_index;
             } else {
