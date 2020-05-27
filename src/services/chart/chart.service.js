@@ -245,6 +245,9 @@ class Dynamic {
             for (let j = i + 1; j < this.contigs.length; ++j) {
                 let iOverlap = this.getOverlap(this.contigs[i], this.contigs[j], l);
                 let jOverlap = this.getOverlap(this.contigs[j], this.contigs[i], l);
+                if(iOverlap === 0 && jOverlap === 0) {
+                    continue;
+                }
                 if (iOverlap > jOverlap) {
                     resultQueue.push({source: i, target: j, value: iOverlap});
                 } else {
@@ -252,6 +255,7 @@ class Dynamic {
                 }
             }
         }
+        console.log(resultQueue);
         return resultQueue;
     }
 
@@ -296,9 +300,10 @@ class Dynamic {
 }
 
 export default class ChartService {
-    constructor($rootScope) {
+    constructor($rootScope, toastr) {
         'ngInject';
         this.rootScope = $rootScope;
+        this.toastr = toastr;
     }
 
     addLink(source, target) {
@@ -378,9 +383,10 @@ export default class ChartService {
         let adjMatrix = math.zeros(this.contigs.length, this.contigs.length);
         for (let i = 0 ; i < this.currentStep ; ++i){
             let currentQueueValue = this.stepQueue[i];
-            console.log(currentQueueValue);
             adjMatrix.set([currentQueueValue.source, currentQueueValue.target], currentQueueValue.value);
         }
+        let currentQueueValue = this.stepQueue[this.currentStep - 1];
+        this.toastr.success("Dodano krawędź z " + currentQueueValue.source + " do " + currentQueueValue.target + " o wartości " + currentQueueValue.value);
 
         this.createGraphFromMatrix(this.contigs, adjMatrix);
         this.currentStep+=1;
