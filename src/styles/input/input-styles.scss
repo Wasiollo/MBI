@@ -1,5 +1,9 @@
 .list-group-scrollable {
-  max-height: 5.2em;
+  max-height: 8.2em;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+.overlap-min {
+  width: 68.2%;
 }

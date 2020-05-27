@@ -19,6 +19,7 @@ export default class HomeController {
         this.graphAlgorithms = [this.GREEDY, this.SUFFIX, this.DYNAMIC]
         this.resultSequence = "";
         this.stepByStepMode = false;
+        this.overlapMin = 2;
     };
 
 
@@ -68,11 +69,19 @@ export default class HomeController {
     }
 
     generateGraph(when) {
-        this.chartService.assembly(this.readsBuffer, this.graphAlgorithm, when);
+        if(this.overlapMin === undefined || this.overlapMin < 2){
+            this.toastr.error("Minimalny overlap jest niepoprawny. Musi być równy co najmniej 2.");
+            return;
+        }
+        this.chartService.assembly(this.readsBuffer, this.graphAlgorithm, when,this.overlapMin);
     }
 
     stepByStep(){
-        this.chartService.assembly_step_by_step(this.readsBuffer, this.graphAlgorithm);
+        if(this.overlapMin === undefined || this.overlapMin < 2){
+            this.toastr.error("Minimalny overlap jest niepoprawny. Musi być równy co najmniej 2.");
+            return;
+        }
+        this.chartService.assembly_step_by_step(this.readsBuffer, this.graphAlgorithm,this.overlapMin);
         this.stepByStepMode = true;
         this.clearGraph();
     }
@@ -98,9 +107,5 @@ export default class HomeController {
     }
     clearGraph() {
         this.chartService.clearGraph();
-    }
-
-    testOlcAssmbly() {
-        this.chartService.testOlcAssembly();
     }
 }

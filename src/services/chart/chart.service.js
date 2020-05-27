@@ -310,13 +310,12 @@ export default class ChartService {
         this.rootScope.$broadcast('clearGraph');
     }
 
-    assembly(readsBuffer, type, graphShow) {
-        //l (drugi parametr) było wcześniej 2 -> nie wiem czy ruszać na pewno :D
-        return this.olc_assembly(readsBuffer, readsBuffer[0].length / 2, readsBuffer[0].length, type, graphShow);
+    assembly(readsBuffer, type, graphShow, overlapMin) {
+        return this.olc_assembly(readsBuffer, overlapMin, readsBuffer[0].length, type, graphShow);
     }
 
-    assembly_step_by_step(readsBuffer, type) {
-        return this.olc_assembly_step_by_step(readsBuffer, readsBuffer[0].length / 2, readsBuffer[0].length, type);
+    assembly_step_by_step(readsBuffer, type,overlapMin) {
+        return this.olc_assembly_step_by_step(readsBuffer, overlapMin, readsBuffer[0].length, type);
     }
 
     ajd_to_path_matrix(adj) {
@@ -393,7 +392,6 @@ export default class ChartService {
 
         if (type === 'greedy') {
             let adj_matrix = this.overlap_naive(contigs, l, k);
-            console.table(adj_matrix._data);
             if (graphShow === 'beforeReduction') {
                 this.createGraphFromMatrix(contigs, adj_matrix);
             }
@@ -405,12 +403,11 @@ export default class ChartService {
 
             return this.greedy_hpath(contigs, reducted_mat);
         } else if (type === 'suffix') {
-            //TODO
             let tree = new SuffixTree('');
             for (let c of contigs) {
                 tree.add(c);
             }
-            let adj_matrix = tree.findOverlaps(contigs, 2); // TODO let user adjust this
+            let adj_matrix = tree.findOverlaps(contigs, l);
 
             if(graphShow === 'beforeReduction'){
                 this.createGraphFromMatrix(contigs, adj_matrix);
@@ -427,7 +424,6 @@ export default class ChartService {
         } else if (type === 'dynamic') {
             let dynamic = new Dynamic(contigs);
             let adj_matrix = dynamic.createAdjMatrix(l);
-            console.table(adj_matrix._data);
             if (graphShow === 'beforeReduction') {
                 this.createGraphFromMatrix(contigs, adj_matrix);
             }
@@ -439,7 +435,7 @@ export default class ChartService {
 
             return this.greedy_hpath(contigs, reducted_mat);
         } else {
-            //TODO -? throw error?
+            throw "Illegal option";
         }
     }
 
@@ -517,10 +513,5 @@ export default class ChartService {
         }
 
         return sequence;
-    }
-
-    testOlcAssembly() {
-        let seq = this.olc_assembly(['XTTG', 'TTGG', 'TGGT', 'TGXG', 'GGTT', 'TTGX', 'GTTG',], 3, 4, 'greedy', 'none');
-        console.log(seq);
     }
 }

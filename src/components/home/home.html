@@ -29,6 +29,11 @@
                             </button>
                         </div>
                         <div class="form-row mt-2">
+                            <label class="col-3 col-form-label" for="overlapMin">Min. Overlap:</label>
+                            <input class="form-control overlap-min" type="number" min="2" id="overlapMin" ng-model="$ctrl.overlapMin"
+                                   ng-value="$ctrl.overlapMin"/>
+                        </div>
+                        <div class="form-row mt-2">
                             <label class="col-3 col-form-label" for="graphAlgorithm">Algorytm:</label>
                             <select class="form-control col-5" id="graphAlgorithm" ng-model="$ctrl.graphAlgorithm"
                                     ng-options="algorithm.value as algorithm.label for algorithm in $ctrl.graphAlgorithms">
@@ -43,7 +48,6 @@
                         <div class="row">
                             <div class="col-2">
                                 <label class="col-form-label">Odczyty:</label>
-                                <button class="btn btn-light" ng-click="$ctrl.testOlcAssmbly()">con_test</button>
                             </div>
                             <div class="col-7">
                                 <ul class="list-group list-group-scrollable" ng-model="$ctrl.readsBuffer">
